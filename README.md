@@ -3,7 +3,7 @@ The Reasoned Schemer
 
 Ian Taylor, 2017
 
-[The Reasoned Schemere](https://mitpress.mit.edu/books/reasoned-schemer) is an explanation of the
+[The Reasoned Schemer](https://mitpress.mit.edu/books/reasoned-schemer) is an explanation of the
 logic programming language, miniKanren, implemented in Scheme.
 
 This repo is a fork of the original code base for The Reasoned Schemer, and contains my exercise code and helper code (some of which is mine).
