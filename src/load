@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+# Ian Taylor 2017
+
+# Load all necessary files containing exercises
+# Use rlwrap to make the REPL actually useable ><
+
+rlwrap scheme --load mkprelude.scm \
