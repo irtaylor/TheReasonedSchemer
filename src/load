@@ -5,3 +5,4 @@
 # Use rlwrap to make the REPL actually useable ><
 
 rlwrap scheme --load mkprelude.scm \
+1_playthings.scm \
