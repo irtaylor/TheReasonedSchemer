@@ -72,3 +72,19 @@
       (else fail))
       (== #f x)
     (== (cons y (cons z '())) r)))
+
+
+(run* (q)
+  (let ((a (== #t q))   ; this is an expression, whose value is a goal.
+        (b (== #f q)))
+    b))                 ; ... but we only treat the value of (== #f q) as a goal
+
+(run* (q)
+  (let ((a (== #t q))
+        (b (fresh (x)
+              (== x q)
+              (== #f x)))
+        (c (conde
+              ((== #t q) succeed)
+              (else (== #f q)))))
+    b))
