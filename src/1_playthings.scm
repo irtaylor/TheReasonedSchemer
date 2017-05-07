@@ -1,7 +1,7 @@
 ;; Chapter 1: Playthings
 
 (run* (q)
-  (fresh (x)
+  (fresh (x)        ; fresh follows the syntax of lambda expressions
     (== x #t)
     (== #t q)))
 
@@ -14,7 +14,7 @@
     (== (eq? x q) q)))
 
 (run* (x)
-  (conde
+  (conde                       ; e = "Every line".
     ((== 'olive x) succeed)
     ((== 'oil x) succeed)     ; here, we pretend that (== 'olive x) failed, refreshing x
     (else fail)))
@@ -34,17 +34,41 @@
       (else fail))
     (== (cons x (cons y '())) r)))
 
-(define teacupo
+(define teacupo               ; The superscript 'o' indicates that this function returns a goal as its value
   (lambda (x)
     (conde
       ((== 'tea x) succeed)
       ((== 'cup x) succeed)
       (else fail))))
 
+(run* (x)
+  (teacupo x))
+
 (run* (r)
   (fresh (x y)
     (conde
-      ((teacupo x) (== #t y) succeed)
-      ((== #f x) (== #t y))
+      ((teacupo x) (== #t y) succeed)     ; teacupo associates x w/ 'tea and 'cup
+      ((== #f x) (== #t y))               ; x is associated w/ #f
       (else fail))
-    (== (cons x (cons y '())) r)))
+    (== (cons x (cons y '())) r)))        ; returns: ((tea #t) (cup #t) (#f #t))
+
+
+;; This gets harder...
+; Compare this expression...
+(run* (r)
+  (fresh (x y z)
+    (conde
+      ((== y x) (fresh (x) (== z x)))
+      ((fresh (x) (== y x)) (== z x))
+      (else fail))
+    (== (cons y (cons z '())) r)))
+
+; With this one...
+(run* (r)
+  (fresh (x y z)
+    (conde
+      ((== y x) (fresh (x) (== z x)))
+      ((fresh (x) (== y x)) (== z x))
+      (else fail))
+      (== #f x)
+    (== (cons y (cons z '())) r)))
