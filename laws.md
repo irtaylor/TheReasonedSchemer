@@ -1,5 +1,9 @@
 # Logical Laws And Notes
 
+## run*
+
+`(run* (q) g ...)` has the value `'()` if any goal in `g ...` fails 
+
 ## The Law of Fresh
 
 If `x` is fresh, then `(v x)` succeeds, and associates `x` with `v`.
