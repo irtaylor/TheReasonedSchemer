@@ -65,7 +65,7 @@
           (cdro l d)
           (membero x d))))))
 
-(define rembero  
+(define rembero
   (lambda (x l out)
     (conde
       ((nullo l) (== '() out))
@@ -79,7 +79,7 @@
   (lambda (l s out)
     (conde
       ((nullo l) (== s out))
-      (else 
+      (else
         (fresh (a d res)
           (conso a d l)
           (conso a res out)
@@ -92,7 +92,7 @@
       (else (anyo g)))))
 
 (define nevero (anyo fail))
- 
+
 (define alwayso (anyo succeed))
 
 (define build-num
@@ -171,8 +171,8 @@
   (lambda (n m p)
     (condi
       ((== '() n) (== '() p))
-      ((poso n) (== '() m) (== '() p))  
-      ((== '(1) n) (poso m) (== m p))   
+      ((poso n) (== '() m) (== '() p))
+      ((== '(1) n) (poso m) (== m p))
       ((>1o n) (== '(1) m) (== n p))
       ((fresh (x z)
          (== `(0 . ,x) n) (poso x)
@@ -184,7 +184,7 @@
          (== `(0 . ,y) m) (poso y)
          (*o m n p)))
       ((fresh (x y)
-          (== `(1 . ,x) n) (poso x)      
+          (== `(1 . ,x) n) (poso x)
           (== `(1 . ,y) m) (poso y)
           (odd-*o x n m p)))
       (else fail))))
@@ -209,7 +209,7 @@
              (cdro m z)
              (bound-*o x y z '()))
             (else
-              (cdro n z) 
+              (cdro n z)
               (bound-*o x y z m))))))))
 
 (define =lo
@@ -266,9 +266,9 @@
        (<o r m))
       (else
         (alli
-          (<lo m n)                        
-          (<o r m)                        
-          (poso q)                 
+          (<lo m n)
+          (<o r m)
+          (poso q)
           (fresh (nh nl qh ql qlm qlmr rr rh)
             (alli
               (splito n r nl nh)
@@ -279,7 +279,7 @@
                  (-o nl r qlm)
                  (*o ql m qlm))
                 (else
-                  (alli 
+                  (alli
                     (poso nh)
                     (*o ql m qlm)
                     (+o qlm r qlmr)
@@ -355,17 +355,17 @@
            ((== q ql))
            (else (<lo ql q)))
          (fresh (bql qh s qdh qd)
-           (repeated-mul b ql bql)        
-           (/o nw bw1 qh s)                
+           (repeated-mul b ql bql)
+           (/o nw bw1 qh s)
            (+o ql qdh qh)
            (+o ql qd q)
            (conde
              ((== qd qdh))
              (else (<o qd qdh)))
            (fresh (bqd bq1 bq)
-             (repeated-mul b qd bqd)        
-             (*o bql bqd bq)                
-             (*o b bq bq1)                
+             (repeated-mul b qd bqd)
+             (*o bql bqd bq)
+             (*o b bq bq1)
              (+o bq r n)
              (<o n bq1)))))
       (else fail))))
@@ -377,14 +377,14 @@
       ((>1o n) (== '(1) q)
        (fresh (s)
          (splito n b s '(1))))
-      ((fresh (q1 b2)                        
-         (alli                 
+      ((fresh (q1 b2)
+         (alli
            (== `(0 . ,q1) q)
            (poso q1)
            (<lo b n)
            (appendo b `(1 . ,b) b2)
            (exp2 n b2 q1))))
-      ((fresh (q1 nh b2 s)                
+      ((fresh (q1 nh b2 s)
           (alli
             (== `(1 . ,q1) q)
             (poso q1)
@@ -417,12 +417,15 @@
     ((_ title x ...)
      (lambdag@ (s)
        (begin
-         (printf "~a~n" title)
-         (for-each (lambda (x_ t) 
-                     (printf "~a = ~s~n" x_ t))
+         (display title)
+         (newline)
+         (for-each (lambda (x_ t)
+                     (display x_)
+                     (display " = ")
+                     (write t)
+                     (newline))
            `(x ...) (reify (walk* `(,x ...) s)))
          (unit s))))))
-
 ;;; (run* (q)
 ;;;   (fresh (r)
 ;;;     (== 3 q)

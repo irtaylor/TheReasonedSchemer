@@ -1,0 +1,43 @@
+Logic Programming in Scheme
+Nils M Holm, 2007
+
+Functions vs Goals
+
+In Functional Programming, functions are combined to form programs.
+
+(append '(orange) '(juice)) => '(orange juice)
+
+
+The building blocks of Logic Programming are called goals.
+A goal is a function that maps knowledge to knowledge:
+
+(run* (q) (appendo '(orange) '(juice) '(orange juice))) => (_.0)
+
+Here, appendo is the goal.
+
+An application of run* is called a query, just as in SQL.  Run* is thus the
+interface b/w Scheme and the logic programming subsystem.
+
+The above logic query means that (orange juice) is equal to appending (orange) and (juice)
+
+
+Unification
+
+The unification goal:
+(run* ()
+  (== x y))
+
+Means unify x with y. The answer to the query depends on the values of x and y.
+If both x and y are atoms, == succeeds if the atoms are equal.
+If either x or y are variables, the variable will be bound to the other argument.
+
+Only fresh variables can be bound to values, since fresh variables are not yet bound.
+
+
+Parameterized Goals are functions which return goals:
+
+E.g. conso, caro, cdro.
+(define (conso a d p) (== (cons a d) p))
+
+(run* (vq)
+  (caro vq 'x))
