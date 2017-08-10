@@ -21,6 +21,24 @@
       (== (cons a d) p))))    ; d is a fresh variable, e.g. _.0.
                               ; thus, (cons a d) => `(,a _.0)
 
+(define caro2
+  (lambda (p a)
+    (== (car p) a)))
+
+
+; miniKanren functions are similar to their functional counterparts, except with the extra
+; notion of trying to complete some sort of goal.
+
+(let ((x
+        (run* (q)
+          (caro '(t e a) q)))
+      (y
+        (run* (q)
+          (caro2 '(t e a) q))))
+      (equal? x y))   ; => #t
+
+(run* (q)
+  (caro '(t e a) (car `(,q e a))))  ; => (t)
 
 
 ; in the below example, (caro `(,r ,y) x) ==> p is `(,r ,y), a is x, and d is fresh
@@ -30,14 +48,41 @@
     (== 'pear x)))        ; => '(pear)
 
 (define cdro
-  (lambda (p d)
-    (fresh (a)
-      (== (cons a d) p))))
+  (lambda (p d)               ; the first arg is what we take the cdr of. the second arg is the thing we want to unify with.
+    (fresh (a)                ; by making a fresh, we say that we don't care about its value
+      (== (cons a d) p))))    ; we do, however, care about d, which is a bound variable. thus, we wish to unify p with '(_.0 ,d)
+; another way to state the goal: unifying p with a list starting with anything and ending with d.
+
+
+; will this work?
+(define cdro2
+  (lambda (p a)
+    (== (cdr p) a)))
+
+(run* (x)
+  (cdro '(c o r n) x))  ; => ('(o r n))
 
 (run* (x)
   (cdro '(c o r n) `(,x r n)))  ; => associates x w/ o
 ; as a query, we might read: "What values of x satisfy the cdr of '(c o r n)
 ; being equal to `(,x r n)?"
+
+(let ((x
+        (run* (q)
+          (cdro '(c o r n) `(,q r n))))
+      (y
+        (run* (q)
+          (cdro2 '(c o r n) `(,q r n)))))
+      (equal? x y))   ; => #t
+
+; This shows that cdro and cdro2 are the same ...
+; The idea is to return a goal to unify the cdr of arg1 with arg2
+
+
+; The fresh variables introduced in caro and cdro serve as the pieces of the list that we don't really care about for our goals' purposes.
+; E.g. in caro, the fresh variable stands in for the cdr of the list, meaning we don't care about the cdr.
+; In cdro, we don't care about the car of the list.
+
 
 (run* (x)
   (conde
@@ -66,3 +111,21 @@
 
 (run* (q)
   (eqo 'plum 'plum))  ; => (_.0), since the goal succeeds, but q has not been associated and remains fresh
+
+(pair? '(pear))  ; => #true, since it is the pair '(pear . ())
+
+(run* (r)
+  (fresh (x y)
+    (== (cons x (cons y 'salad)) r))) ; => '(_.0 _.1 salad)
+
+
+(define conso
+  (lambda (a d p)         ; the third var is an output var, necessary to define a unification goal
+    (== (cons a d) p)))
+
+; These are functions which return goals.
+(run* (q) (conso 'a '(b c) q))  ; => ((a b c)). i.e. find all q such that the unification goal of q with (cons a (b c)) succeeds
+
+
+;; TODO For this chapter: need to understand how these key functions
+;   caro, cdro, pairo, and conso work.
