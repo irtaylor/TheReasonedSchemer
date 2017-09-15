@@ -21,9 +21,14 @@
       (== (cons a d) p))))    ; d is a fresh variable, e.g. _.0.
                               ; thus, (cons a d) => `(,a _.0)
 
+; what caro does is to ask: "For what values of a can i unify the list `(,a _.0)
+; with list p". since var a is the car of (cons a d), then this will tell us the
+; car of the list that can unify with the car of p.
+
+; another way to possibly write this:
 (define caro2
   (lambda (p a)
-    (== (car p) a)))
+    (== (car p) a)))    ; what values of a can unify with (car p)
 
 
 ; miniKanren functions are similar to their functional counterparts, except with the extra
@@ -47,6 +52,8 @@
     (caro `(,x ,y) r)     ; x is associated w/ car of `(,r ,y), which is the fresh variable r
     (== 'pear x)))        ; => '(pear)
 
+
+; in cdro, we fresh the a, instead of the var d, since what we want are the possible values of var d
 (define cdro
   (lambda (p d)               ; the first arg is what we take the cdr of. the second arg is the thing we want to unify with.
     (fresh (a)                ; by making a fresh, we say that we don't care about its value
@@ -126,6 +133,6 @@
 ; These are functions which return goals.
 (run* (q) (conso 'a '(b c) q))  ; => ((a b c)). i.e. find all q such that the unification goal of q with (cons a (b c)) succeeds
 
-
-;; TODO For this chapter: need to understand how these key functions
-;   caro, cdro, pairo, and conso work.
+; nullo: can we unify the variable with the empty list '()
+; eqo: can we unify the two variables
+; pairo:  can our variable be unified with a list of any two elements

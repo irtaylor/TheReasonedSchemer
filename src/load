@@ -6,4 +6,5 @@
 
 rlwrap scheme --load mkprelude.scm \
 1_playthings.scm \
-2_old_toys_new_tricks \
+2_old_toys_new_tricks.scm \
+3_seeing_old_friends.scm \
