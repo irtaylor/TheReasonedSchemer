@@ -71,3 +71,41 @@
   (lolo `((a b) (c d) ,x)))
 ; => '(())
 ; since replacing x w/ empty list gives us '((a b) (c d) . ())
+
+; a twin is a list of two identical values:
+; => '(tofu tofu) is a twin
+; => '(g g g) is NOT a twin
+; => '((g g) (tofu tofu)) is a list of twins
+
+
+(define twinso
+  (lambda (s)
+    (fresh (x y)
+      (conso x y s)
+      (conso x '() y))))
+
+(run* (q)
+  (twinso '(tofu tofu))
+  (== #t q))
+
+(run* (z)
+  (twinso `(,z tofu)))
+; => '(tofu), i.e. the value associated w/ z is 'tofu
+
+(run* (z)
+  (twinso `(,z tofu rice)))
+; => '(), since there is no value we can associate with z to have a twin
+
+; defining twinso without conso is clearer:
+(define twinso-2
+  (lambda (s)
+    (fresh (x)
+      (== `(,x ,x) s))))
+
+(run* (q)
+  (twinso-2 `(,q (oil oil))))
+; => '((oil oil))
+
+
+(run 5 (z)
+  (loto `((g g) . ,z)))
