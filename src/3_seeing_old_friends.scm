@@ -105,7 +105,119 @@
 (run* (q)
   (twinso-2 `(,q (oil oil))))
 ; => '((oil oil))
+; `(,q (oil oil)) is only a twin when q is associated w/ '(oil oil)
 
+; list-of-twins
+(define loto
+  (lambda (l)
+    (conde
+      ((nullo l) succeed)
+      ((fresh (a)
+          (caro l a)
+          (twinso-2 a))
+        (fresh (d)
+          (cdro l d)
+          (loto d)))
+    (else fail))))
+
+(run 1 (z)
+  (loto `((g g) . ,z)))
+; => '(())
+; `((g g) . ,z) is a list-of-twins when z is the empty list
 
 (run 5 (z)
   (loto `((g g) . ,z)))
+
+(run 5 (r)
+  (fresh (w x y z)
+    (loto `((g g) (e ,w) (,x ,y) . ,z))
+    (== `(,w (,x ,y) ,z) r)))
+
+(run 3 (out)
+  (fresh (w x y z)
+    (== `((g g) (e ,w) (,x ,y) . ,z) out)
+    (loto out)))
+; we have two goals:
+; 1) unify ,out w/ `((g g) (e ,w) (,x ,y) . ,z)
+; 2) associate out w/ a list-of-twins
+; if we can meet both of those, we'll have our answers...
+
+
+(define listofo
+  (lambda (predo l)
+    (conde
+      ((nullo l) succeed)
+      ((fresh (a)
+          (caro l a)
+          (predo a))
+        (fresh (d)
+          (cdro l d)
+          (listofo predo d)))
+    (else fail))))
+
+(run 3 (out)
+  (fresh (w x y z)
+    (== `((g g) (e ,w) (,x ,y) . ,z) out)
+    (listofo twinso out)))
+
+(define loto-2
+  (lambda (l)
+    (listofo twinso l)))
+
+
+; We'll redefine member? using eq-car?
+(define eq-car?
+  (lambda (l x)
+    (eq? (car l) x)))
+
+(define member?
+  (lambda (x l)
+    (cond
+      ((null? l) #f)
+      ((eq-car? l x) #t)
+    (else (member? x (cdr l))))))
+          ; ^ we'll unnest this expression
+
+(member? 'olive '(extra virgin olive oil))
+; => #t
+
+(define eq-caro
+  (lambda (l x)
+    (caro l x)))
+
+(define membero
+  (lambda (x l)
+    (conde
+      ((nullo l) fail)           ; this line is uneccesary, since it is guarenteed to fail
+      ((eq-caro l x) succeed)
+    (else
+      (fresh (d)
+        (cdro l d)
+        (membero x d))))))
+
+(run* (q)
+  (membero 'olive '(extra virgin olive oil))
+  (== #t q))
+; => '(#t)
+
+(run* (y)
+  (membero y '(hummus with pita)))
+; => '(hummus with pita)
+
+(define identity
+  (lambda (l)
+    (run* (y)
+      (membero y l))))
+
+(run* (x)
+  (membero 'e `(pasta ,x fagioli)))
+; => (e)
+
+(run* (r)
+  (fresh (x y)
+    (membero 'e `(pasta ,x fagioli ,y))
+    (== `(,x ,y) r)))
+
+(run 1 (l)
+  (membero 'tofu l))
+; => ((tofu . _.0))

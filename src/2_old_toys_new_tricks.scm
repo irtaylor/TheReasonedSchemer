@@ -21,7 +21,7 @@
       (== (cons a d) p))))    ; d is a fresh variable, e.g. _.0.
                               ; thus, (cons a d) => `(,a _.0)
 
-; what caro does is to ask: "For what values of a can i unify the list `(,a _.0)
+; what caro does is to ask: "For what values of 'a' can i unify the list `(,a _.0)
 ; with list p". since var a is the car of (cons a d), then this will tell us the
 ; car of the list that can unify with the car of p.
 
