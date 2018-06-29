@@ -221,3 +221,29 @@
 (run 1 (l)
   (membero 'tofu l))
 ; => ((tofu . _.0))
+
+
+; improvement:
+(define pmembero
+  (lambda (x l)
+    (conde
+      ((nullo l) fail)
+      ((eq-caro l x) (cdro l '()))
+    (else
+      (fresh (d)
+        (cdro l d)
+        (pmembero x d))))))
+
+(run 5 (l)
+  (pmembero 'tofu l))
+; ^ this won't append a fresh variable to the end of the result-lists
+; see frame 80
+
+(run* (q)
+  (pmembero 'tofu '(a b tofu d tofu))
+  (== #t q))
+; => (#t)
+; this is incorrect
+
+
+; ... continue
